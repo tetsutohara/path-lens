@@ -3,6 +3,8 @@
   "displayName": "Path Sense",
   "description": "A fast, feature-rich Path IntelliSense designed to speed up your workflow.",
   "version": "0.0.1",
+  "publisher": "testutohara",
+  "repository": "https://github.com/tetsutohara/path-sense",
   "engines": {
     "vscode": "^1.125.0"
   },
