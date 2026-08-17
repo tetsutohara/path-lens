@@ -1,9 +1,25 @@
 # Change Log
 
-All notable changes to the "path-sense" extension will be documented in this file.
+All notable changes to the `path-sense` extension will be documented in this file.
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
+See [Keep a Changelog](https://keepachangelog.com/) for recommendations on how to structure this file.
 
 ## [Unreleased]
 
-- Initial release
+## [0.0.2] - 2026-08-17
+
+### Added
+
+- Add `pathCompletionProvider` to provide path completion.
+
+## [0.0.1] - 2026-08-12
+
+### Added
+
+- Set up the development environment.
+- Add `README.md`.
+- Add the MIT `LICENSE`.
+- Configure Prettier, Husky, and lint-staged.
+- Add contribution guidelines.
+- Add the repository URL and publisher name to `package.json`.
+- Initial release.

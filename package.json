@@ -2,7 +2,7 @@
   "name": "path-sense",
   "displayName": "Path Sense",
   "description": "A fast, feature-rich Path IntelliSense designed to speed up your workflow.",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "publisher": "testutohara",
   "repository": "https://github.com/tetsutohara/path-sense",
   "engines": {
@@ -18,7 +18,9 @@
     ],
     "*.{json,md}": "prettier --write"
   },
-  "activationEvents": [],
+  "activationEvents": [
+    "*"
+  ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
