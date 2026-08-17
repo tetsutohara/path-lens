@@ -19,7 +19,7 @@
     "*.{json,md}": "prettier --write"
   },
   "activationEvents": [
-    "*"
+    "onLanguage"
   ],
   "main": "./out/extension.js",
   "contributes": {
