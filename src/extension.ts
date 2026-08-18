@@ -1,10 +1,20 @@
 import * as vscode from "vscode";
-import { pathCompletionProvider } from "./provider/pathCompletionProvider";
+import { PathCompletionProvider } from "./provider/pathCompletionProvider";
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
-  context.subscriptions.push(pathCompletionProvider);
+  const provider = new PathCompletionProvider();
+
+  const disposable = vscode.languages.registerCompletionItemProvider(
+    { scheme: "file" },
+    provider,
+    "/",
+    ".",
+    "@",
+    "~",
+  );
+  context.subscriptions.push(disposable);
 }
 
 // This method is called when your extension is deactivated
