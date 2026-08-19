@@ -3,7 +3,7 @@ import * as vscode from "vscode";
 export function entry2item(
   entries: [string, vscode.FileType][],
   pathSuffix: string,
-) {
+): vscode.CompletionItem[] {
   return entries.map(([name, type]) => {
     const isDir = type == vscode.FileType.Directory;
 
