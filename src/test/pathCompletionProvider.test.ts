@@ -8,7 +8,13 @@ import path from "path";
 suite("PathCompletionProvider Test Suite", () => {
   vscode.window.showInformationMessage("Start PathCompletionProvider Test");
 
-  const provider = new PathCompletionProvider();
+  const config = {
+    enable: true,
+    alias: { "@": "/src" },
+    excludePath: ["**/node_modules/**"],
+  };
+
+  const provider = new PathCompletionProvider(config);
 
   // 1. Test private helper function
   test("extractPathInput Test 1", () => {
