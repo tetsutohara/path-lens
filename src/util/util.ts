@@ -1,4 +1,6 @@
 import * as vscode from "vscode";
+import picomatch from "picomatch";
+import { Config } from "../types/types";
 
 export function entry2item(
   entries: [string, vscode.FileType][],
@@ -12,6 +14,8 @@ export function entry2item(
       isDir ? vscode.CompletionItemKind.Folder : vscode.CompletionItemKind.File,
     );
 
+    // Prevent duplicated path completion when the user run path completion
+    //  just after file extension period (e.g. suppose | as cursor ./my-path/hoo.|)
     const lastPeriodIndex = pathSuffix.lastIndexOf(".");
 
     let remainPath;
@@ -31,5 +35,27 @@ export function entry2item(
     }
 
     return item;
+  });
+}
+
+export function excludeDir(
+  entries: [string, vscode.FileType][],
+  config: Config,
+): [string, vscode.FileType][] {
+  // If no exclude rules exist or array is empty, return all entries
+  if (!config.excludePath || config.excludePath.length === 0) {
+    return entries;
+  }
+
+  // Create a matcher function from the configured glob patterns
+  const isExcluded = picomatch(config.excludePath, { dot: true });
+
+  return entries.filter(([name, type]) => {
+    const isDir = type === vscode.FileType.Directory;
+
+    // Test exact file/folder name as well as normalized folder path
+    const targetPath = isDir ? `${name}/` : name;
+
+    return !isExcluded(targetPath) && !isExcluded(name);
   });
 }

@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { entry2item } from "../util/util";
+import { entry2item, excludeDir } from "../util/util";
 import { PathResolver } from "../resolver/pathResolver";
 import { Config } from "../types/types";
 
@@ -48,7 +48,8 @@ export class PathCompletionProvider implements vscode.CompletionItemProvider {
     // TODO: delete large directory from the path completion candidates. (e.g. node_modules)
     try {
       const entries = await vscode.workspace.fs.readDirectory(targetUri);
-      return entry2item(entries, pathSuffix);
+      const excludedDir = excludeDir(entries, this.config);
+      return entry2item(excludedDir, pathSuffix);
     } catch (error) {
       return undefined;
     }
