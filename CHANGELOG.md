@@ -6,6 +6,12 @@ See [Keep a Changelog](https://keepachangelog.com/) for recommendations on how t
 
 ## [Unreleased]
 
+## [0.0.3] - 2026-08-20
+
+### Added
+
+- Add `PathResolver` to resolve path alias.
+
 ## [0.0.2] - 2026-08-17
 
 ### Added
