@@ -1,8 +1,14 @@
 import * as vscode from "vscode";
-import * as path from "path";
 import { entry2item } from "../util/util";
+import { PathResolver } from "../resolver/pathResolver";
+import { Config } from "../types/types";
 
 export class PathCompletionProvider implements vscode.CompletionItemProvider {
+  private config;
+  constructor(config: Config) {
+    this.config = config;
+  }
+
   private extractPathInput(
     linePrefix: string,
   ): { pathPrefix: string; pathSuffix: string } | undefined {
@@ -15,7 +21,7 @@ export class PathCompletionProvider implements vscode.CompletionItemProvider {
     const match = linePrefix.match(/['"`\s]([^\s'"`]*)$/);
     const startIndex = match ? linePrefix.length - match[1].length : 0;
 
-    const pathPrefix = linePrefix.slice(startIndex, lastSlashIndex + 1);
+    let pathPrefix = linePrefix.slice(startIndex, lastSlashIndex + 1);
     const pathSuffix = linePrefix.slice(lastSlashIndex + 1);
 
     return { pathPrefix, pathSuffix };
@@ -36,10 +42,8 @@ export class PathCompletionProvider implements vscode.CompletionItemProvider {
 
     const { pathPrefix, pathSuffix } = parsedPath;
 
-    const documentDir = path.join(
-      path.dirname(document.uri.fsPath),
-      pathPrefix,
-    );
+    const resolver = new PathResolver(this.config);
+    const documentDir = resolver.resolveDirectory(pathPrefix, document.uri);
     const targetUri = vscode.Uri.file(documentDir);
     // TODO: delete large directory from the path completion candidates. (e.g. node_modules)
     try {

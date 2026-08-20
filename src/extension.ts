@@ -4,7 +4,13 @@ import { PathCompletionProvider } from "./provider/pathCompletionProvider";
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
-  const provider = new PathCompletionProvider();
+  const config = {
+    enable: true,
+    alias: { "@": "/src" },
+    excludePath: ["**/node_modules/**"],
+  };
+
+  const provider = new PathCompletionProvider(config);
 
   const disposable = vscode.languages.registerCompletionItemProvider(
     { scheme: "file" },
