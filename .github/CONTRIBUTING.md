@@ -40,6 +40,7 @@ Please follow these steps to submit a pull request:
    | ------------- | --------------------- |
    | `doc/`        | Documentation changes |
    | `feat/`       | New features          |
+   | `fix/`        | Bug fix               |
    | `chore/`      | Maintenance tasks     |
 
 4. Follow the following format for commit messages:
@@ -53,7 +54,8 @@ Please follow these steps to submit a pull request:
    - Detailed description
    ```
 
-   Please keep the detailed description to a maximum of four bullet points. If your changes require more than four bullet points, consider splitting the work into multiple branches and pull requests.
+   > [!WARNING]
+   > Please keep the detailed description to a maximum of four bullet points. If your changes require more than four bullet points, consider splitting the work into multiple branches and pull requests.
 
 5. If you add a new feature, please run the tests before submitting your pull request:
 

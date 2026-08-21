@@ -1,3 +1,5 @@
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 # path-sense
 
 A fast, feature-rich Path IntelliSense extension for Visual Studio Code.
