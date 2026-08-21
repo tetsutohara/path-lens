@@ -41,6 +41,7 @@ Please follow these steps to submit a pull request:
    | `doc/`        | Documentation changes |
    | `feat/`       | New features          |
    | `fix/`        | Bug fix               |
+   | `test/`       | New test code         |
    | `chore/`      | Maintenance tasks     |
 
 4. Follow the following format for commit messages:
