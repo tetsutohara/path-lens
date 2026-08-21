@@ -7,7 +7,7 @@ export function entry2item(
   pathSuffix: string,
 ): vscode.CompletionItem[] {
   return entries.map(([name, type]) => {
-    const isDir = type == vscode.FileType.Directory;
+    const isDir = type === vscode.FileType.Directory;
 
     const item = new vscode.CompletionItem(
       name,
