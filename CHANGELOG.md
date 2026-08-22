@@ -6,6 +6,16 @@ See [Keep a Changelog](https://keepachangelog.com/) for recommendations on how t
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-08-22
+
+### Added
+
+- Added `getConfig` helper to dynamically load settings from `settings.json`.
+
+### Refactored
+
+- Replaced hardcoded configuration logic in `extension.ts` with workspace configuration reader.
+
 ## [0.0.3] - 2026-08-20
 
 ### Added
