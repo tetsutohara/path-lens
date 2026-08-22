@@ -45,7 +45,6 @@ export class PathCompletionProvider implements vscode.CompletionItemProvider {
     const resolver = new PathResolver(this.config);
     const documentDir = resolver.resolveDirectory(pathPrefix, document.uri);
     const targetUri = vscode.Uri.file(documentDir);
-    // TODO: delete large directory from the path completion candidates. (e.g. node_modules)
     try {
       const entries = await vscode.workspace.fs.readDirectory(targetUri);
       const excludedDir = excludeDir(entries, this.config);
