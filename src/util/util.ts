@@ -59,3 +59,13 @@ export function excludeDir(
     return !isExcluded(targetPath) && !isExcluded(name);
   });
 }
+
+// Helper to fetch and normalize from VS Code
+export function getConfig(): Config {
+  const workspaceConfig = vscode.workspace.getConfiguration("pathSense");
+  return {
+    enable: workspaceConfig.get<boolean>("enable", true),
+    alias: workspaceConfig.get<Record<string, string>>("alias", {}),
+    excludePath: workspaceConfig.get<string[]>("excludePath", []),
+  };
+}
