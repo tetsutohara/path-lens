@@ -6,6 +6,10 @@ See [Keep a Changelog](https://keepachangelog.com/) for recommendations on how t
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-08-22
+
+- Add extension icon.
+
 ## [0.1.0] - 2026-08-22
 
 ### Added
