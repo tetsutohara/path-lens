@@ -6,6 +6,12 @@ See [Keep a Changelog](https://keepachangelog.com/) for recommendations on how t
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-08-23
+
+### Fixed
+
+- Fix extension name from `path-sense` to `path-lens`.
+
 ## [0.1.2] - 2026-08-22
 
 ### Fixed
