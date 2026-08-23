@@ -1,6 +1,6 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-# path-sense
+# path-lens
 
 A fast, feature-rich Path IntelliSense extension for Visual Studio Code.
 
@@ -22,11 +22,11 @@ A fast, feature-rich Path IntelliSense extension for Visual Studio Code.
 
 This extension contributes the following settings:
 
-| Setting                 | Type      | Default                               | Description                                                   |
-| :---------------------- | :-------- | :------------------------------------ | :------------------------------------------------------------ |
-| `pathSense.enable`      | `boolean` | `true`                                | Enable or disable path completion globally.                   |
-| `pathSense.alias`       | `object`  | `{ "@": "./src" }`                    | Map custom path aliases to target workspace directories.      |
-| `pathSense.excludePath` | `array`   | `["**/node_modules/**", "**/out/**"]` | Glob patterns or directory paths to exclude from completions. |
+| Setting                | Type      | Default                               | Description                                                   |
+| :--------------------- | :-------- | :------------------------------------ | :------------------------------------------------------------ |
+| `pathLens.enable`      | `boolean` | `true`                                | Enable or disable path completion globally.                   |
+| `pathLens.alias`       | `object`  | `{ "@": "./src" }`                    | Map custom path aliases to target workspace directories.      |
+| `pathLens.excludePath` | `array`   | `["**/node_modules/**", "**/out/**"]` | Glob patterns or directory paths to exclude from completions. |
 
 ## Requirements
 

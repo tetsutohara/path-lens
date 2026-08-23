@@ -62,7 +62,7 @@ export function excludeDir(
 
 // Helper to fetch and normalize from VS Code
 export function getConfig(): Config {
-  const workspaceConfig = vscode.workspace.getConfiguration("pathSense");
+  const workspaceConfig = vscode.workspace.getConfiguration("pathLens");
   return {
     enable: workspaceConfig.get<boolean>("enable", true),
     alias: workspaceConfig.get<Record<string, string>>("alias", {}),
