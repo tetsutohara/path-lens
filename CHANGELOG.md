@@ -26,7 +26,7 @@ See [Keep a Changelog](https://keepachangelog.com/) for recommendations on how t
 
 ### Added
 
-- Added `getConfig` helper to dynamically load settings from `settings.json`.
+- Add `getConfig` helper to dynamically load settings from `settings.json`.
 
 ### Refactored
 
