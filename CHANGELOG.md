@@ -55,3 +55,10 @@ See [Keep a Changelog](https://keepachangelog.com/) for recommendations on how t
 - Add contribution guidelines.
 - Add the repository URL and publisher name to `package.json`.
 - Initial release.
+
+[0.1.3]: https://github.com/tetsutohara/path-lens/compare/v0.1.2...v0.1.3
+[0.1.2]: https://github.com/tetsutohara/path-lens/compare/v0.1.1...v0.1.2
+[0.1.1]: https://github.com/tetsutohara/path-lens/compare/v0.1.0...v0.1.1
+[0.1.0]: https://github.com/tetsutohara/path-lens/compare/v0.0.3...v0.1.0
+[0.0.3]: https://github.com/tetsutohara/path-lens/compare/v0.0.2...v0.0.3
+[0.0.2]: https://github.com/tetsutohara/path-lens/compare/v0.0.1...v0.0.2
