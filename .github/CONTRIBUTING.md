@@ -1,6 +1,6 @@
-# Contributing to Path Sense
+# Contributing to Path Lens
 
-Thank you for taking the time to contribute to Path Sense! This document provides guidelines for contributing to the project.
+Thank you for taking the time to contribute to Path Lens! This document provides guidelines for contributing to the project.
 
 ## Guidelines
 
@@ -26,12 +26,12 @@ Using these tools is encouraged to help make your contributions clear and easy t
 
 Please follow these steps to submit a pull request:
 
-1. Fork the [Path Sense repository](https://github.com/tetsutohara/path-sense).
+1. Fork the [Path Lens repository](https://github.com/tetsutohara/path-lens).
 
 2. Clone your forked repository:
 
    ```bash
-   git clone https://github.com/yourname/path-sense.git
+   git clone https://github.com/yourname/path-lens.git
    ```
 
 3. Create a branch using one of the following naming conventions:

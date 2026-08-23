@@ -1,6 +1,6 @@
 # Change Log
 
-All notable changes to the `path-sense` extension will be documented in this file.
+All notable changes to the `path-lnes` extension will be documented in this file.
 
 See [Keep a Changelog](https://keepachangelog.com/) for recommendations on how to structure this file.
 

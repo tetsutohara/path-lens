@@ -1,10 +1,10 @@
 {
-  "name": "path-sense",
-  "displayName": "Path Sense",
+  "name": "path-lens",
+  "displayName": "Path Lens",
   "description": "A fast, feature-rich Path IntelliSense designed to speed up your workflow.",
   "version": "0.1.2",
   "publisher": "tetsuto-hara",
-  "repository": "https://github.com/tetsutohara/path-sense",
+  "repository": "https://github.com/tetsutohara/path-lens",
   "engines": {
     "vscode": "^1.125.0"
   },
