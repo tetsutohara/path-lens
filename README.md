@@ -36,7 +36,7 @@ No extra dependencies or external tools required! You can use this extension rig
 
 - [x] Path alias support
 - [x] Directory exclusions
-- [ ] Image mini preview
+- [x] Image mini preview
 
 ## Release Notes
 

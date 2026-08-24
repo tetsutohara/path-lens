@@ -6,6 +6,12 @@ See [Keep a Changelog](https://keepachangelog.com/) for recommendations on how t
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-08-24
+
+### Added
+
+- Add image preview tooltips to autocomplete suggestions.
+
 ## [0.1.3] - 2026-08-23
 
 ### Fixed

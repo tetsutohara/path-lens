@@ -2,7 +2,7 @@
   "name": "path-lens",
   "displayName": "Path Lens",
   "description": "A fast, feature-rich Path IntelliSense designed to speed up your workflow.",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "publisher": "tetsuto-hara",
   "repository": "https://github.com/tetsutohara/path-lens",
   "engines": {
