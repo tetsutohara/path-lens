@@ -2,9 +2,32 @@ import * as vscode from "vscode";
 import picomatch from "picomatch";
 import { Config } from "../types/types";
 
+export const imageExtensions: readonly string[] = [
+  "jpg",
+  "jpeg",
+  "png",
+  "gif",
+  "webp",
+  "svg",
+  "bmp",
+  "ico",
+  "tiff",
+  "tif",
+  "avif",
+  "heic",
+  "heif",
+  "raw",
+  "cr2",
+  "nef",
+  "arw",
+  "dng",
+  "psd",
+] as const;
+
 export function entry2item(
   entries: [string, vscode.FileType][],
   pathSuffix: string,
+  targetUri: vscode.Uri,
 ): vscode.CompletionItem[] {
   return entries.map(([name, type]) => {
     const isDir = type === vscode.FileType.Directory;
@@ -13,6 +36,24 @@ export function entry2item(
       name,
       isDir ? vscode.CompletionItemKind.Folder : vscode.CompletionItemKind.File,
     );
+
+    // Add image mini screen
+    const completionItemLastPeriodIndex = name.lastIndexOf(".");
+
+    if (completionItemLastPeriodIndex > 0) {
+      const fileExtension = name
+        .slice(completionItemLastPeriodIndex + 1)
+        .toLowerCase();
+
+      if (imageExtensions.includes(fileExtension)) {
+        const imageUri = vscode.Uri.joinPath(targetUri, name);
+        const docs = new vscode.MarkdownString(
+          `![preview](${imageUri.toString()}|width=300)`,
+        );
+        docs.isTrusted = true;
+        item.documentation = docs;
+      }
+    }
 
     // Prevent duplicated path completion when the user run path completion
     //  just after file extension period (e.g. suppose | as cursor ./my-path/hoo.|)
