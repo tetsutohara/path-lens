@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { entry2item, excludeDir } from "../util/util";
+import { entry2item, excludeDir } from "../util/completion";
 import { PathResolver } from "../resolver/pathResolver";
 import { Config } from "../types/types";
 
