@@ -6,6 +6,12 @@ See [Keep a Changelog](https://keepachangelog.com/) for recommendations on how t
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-08-25
+
+### Added
+
+- Add `pathSense.enable` configuration code to toggle extension path autocompletion on or off.
+
 ## [1.0.0] - 2026-08-24
 
 ### Added
