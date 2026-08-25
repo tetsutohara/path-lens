@@ -31,6 +31,11 @@ export class PathCompletionProvider implements vscode.CompletionItemProvider {
     document: vscode.TextDocument,
     position: vscode.Position,
   ): Promise<vscode.CompletionItem[] | undefined> {
+    // Turn off the extension
+    if (!this.config.enable) {
+      return undefined;
+    }
+
     const linePrefix = document
       .lineAt(position)
       .text.slice(0, position.character);
