@@ -164,4 +164,35 @@ suite("PathCompletionProvider Test Suite", () => {
       });
     }
   });
+
+  const configDisable = {
+    enable: false,
+    alias: { "@": "/src" },
+    excludePath: ["**/node_modules/**"],
+  };
+  const providerDisable = new PathCompletionProvider(configDisable);
+
+  test("provideCompletionItems - returns undefined when extension is switch off", async () => {
+    const tempDir = await fs.mkdtemp(
+      path.join(os.tmpdir(), "path-completion-test-"),
+    );
+
+    try {
+      const document = await createTextDoc(tempDir, "import x from 'util");
+
+      const position = new vscode.Position(0, 9);
+
+      const result = await providerDisable.provideCompletionItems(
+        document,
+        position,
+      );
+
+      assert.strictEqual(result, undefined);
+    } finally {
+      await fs.rm(tempDir, {
+        recursive: true,
+        force: true,
+      });
+    }
+  });
 });
