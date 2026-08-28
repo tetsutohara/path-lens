@@ -6,6 +6,13 @@ See [Keep a Changelog](https://keepachangelog.com/) for recommendations on how t
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-08-28
+
+### Added
+
+- Added `pathLens.excludeExtension` configuration setting.
+- Added support for stripping file extensions from completion insertions based on user settings.
+
 ## [1.1.0] - 2026-08-25
 
 ### Added
