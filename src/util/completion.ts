@@ -86,15 +86,15 @@ export function entry2item(
 
 export function excludeDir(
   entries: [string, vscode.FileType][],
-  config: Config,
+  excludePath: string[] | undefined,
 ): [string, vscode.FileType][] {
   // If no exclude rules exist or array is empty, return all entries
-  if (!config.excludePath || config.excludePath.length === 0) {
+  if (!excludePath || excludePath.length === 0) {
     return entries;
   }
 
   // Create a matcher function from the configured glob patterns
-  const isExcluded = picomatch(config.excludePath, { dot: true });
+  const isExcluded = picomatch(excludePath, { dot: true });
 
   return entries.filter(([name, type]) => {
     const isDir = type === vscode.FileType.Directory;

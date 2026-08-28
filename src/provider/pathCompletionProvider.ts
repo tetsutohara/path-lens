@@ -31,7 +31,7 @@ export class PathCompletionProvider implements vscode.CompletionItemProvider {
     document: vscode.TextDocument,
     position: vscode.Position,
   ): Promise<vscode.CompletionItem[] | undefined> {
-    // Turn off the extension
+    // Terminate plugin
     if (!this.config.enable) {
       return undefined;
     }
@@ -52,7 +52,7 @@ export class PathCompletionProvider implements vscode.CompletionItemProvider {
     const targetUri = vscode.Uri.file(documentDir);
     try {
       const entries = await vscode.workspace.fs.readDirectory(targetUri);
-      const excludedDir = excludeDir(entries, this.config);
+      const excludedDir = excludeDir(entries, this.config.excludePath);
       return entry2item(
         excludedDir,
         pathSuffix,
