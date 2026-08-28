@@ -28,6 +28,7 @@ export function entry2item(
   entries: [string, vscode.FileType][],
   pathSuffix: string,
   targetUri: vscode.Uri,
+  excludeExtension: string[] | undefined,
 ): vscode.CompletionItem[] {
   return entries.map(([name, type]) => {
     const isDir = type === vscode.FileType.Directory;
@@ -37,7 +38,6 @@ export function entry2item(
       isDir ? vscode.CompletionItemKind.Folder : vscode.CompletionItemKind.File,
     );
 
-    // Add image mini screen
     const completionItemLastPeriodIndex = name.lastIndexOf(".");
 
     if (completionItemLastPeriodIndex > 0) {
@@ -45,6 +45,7 @@ export function entry2item(
         .slice(completionItemLastPeriodIndex + 1)
         .toLowerCase();
 
+      // Add image mini screen
       if (imageExtensions.includes(fileExtension)) {
         const imageUri = vscode.Uri.joinPath(targetUri, name);
         const docs = new vscode.MarkdownString(
@@ -52,6 +53,10 @@ export function entry2item(
         );
         docs.isTrusted = true;
         item.documentation = docs;
+      }
+
+      if (excludeExtension && excludeExtension.includes(fileExtension)) {
+        item.insertText = name.slice(0, completionItemLastPeriodIndex);
       }
     }
 

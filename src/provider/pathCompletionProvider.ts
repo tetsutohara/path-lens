@@ -53,7 +53,12 @@ export class PathCompletionProvider implements vscode.CompletionItemProvider {
     try {
       const entries = await vscode.workspace.fs.readDirectory(targetUri);
       const excludedDir = excludeDir(entries, this.config);
-      return entry2item(excludedDir, pathSuffix, targetUri);
+      return entry2item(
+        excludedDir,
+        pathSuffix,
+        targetUri,
+        this.config.excludeExtension,
+      );
     } catch (error) {
       return undefined;
     }

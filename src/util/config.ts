@@ -8,5 +8,6 @@ export function getConfig(): Config {
     enable: workspaceConfig.get<boolean>("enable", true),
     alias: workspaceConfig.get<Record<string, string>>("alias", {}),
     excludePath: workspaceConfig.get<string[]>("excludePath", []),
+    excludeExtension: workspaceConfig.get<string[]>("excludeExtension", []),
   };
 }
