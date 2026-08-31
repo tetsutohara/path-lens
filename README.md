@@ -4,14 +4,6 @@
 
 A fast, feature-rich Path IntelliSense extension for Visual Studio Code.
 
-## Features
-
-- **Blazing Fast Performance:** Instant path completion suggestions as you type.
-- **Custom Path Aliases:** Define custom mapping rules directly in your VS Code settings.
-- **Flexible Exclusion:** Keep your completions clean by filtering out build folders, binary files, or ignored directories.
-- **Image Mini Preview:** Inline image thumbnail preview. (Comming soon)
-- **Automatic `tsconfig.json` & `jsconfig.json` Support:** Automatically parses `compilerOptions.paths` to resolve project path aliases without manual configuration. (Comming soon)
-
 ## Usage
 
 1. Open any supported file.
