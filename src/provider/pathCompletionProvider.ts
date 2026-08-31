@@ -42,18 +42,29 @@ export class PathCompletionProvider implements vscode.CompletionItemProvider {
       }
     }
 
-    // 2. Standard quote/whitespace path handling
-    const lastSlashIndex = linePrefix.lastIndexOf("/");
-    if (lastSlashIndex === -1) {
+    // 2. Standard Quote, Whitespace, or Bare Keyword Handling (e.g., `include includes/` or Ctrl+Space after space)
+    // Matches path-like text starting after a quote, tick, whitespace, or beginning of line
+    const match = linePrefix.match(/(?:['"`\s]|^)([\w\-./\\@~]*)$/);
+    if (!match) {
       return undefined;
     }
 
-    // Find the last opening delimiter (quote, backtick, or whitespace) before the slash
-    const match = linePrefix.match(/['"`\s]([^\s'"`]*)$/);
-    const startIndex = match ? linePrefix.length - match[1].length : 0;
+    const rawPath = match[1];
+    const lastSlashIndex = rawPath.lastIndexOf("/");
 
-    let pathPrefix = linePrefix.slice(startIndex, lastSlashIndex + 1);
-    const pathSuffix = linePrefix.slice(lastSlashIndex + 1);
+    if (lastSlashIndex === -1) {
+      // User pressed Ctrl+Space or typed a filename/folder without a slash yet (e.g. `include inc|`)
+      // Default pathPrefix to current folder `./`
+      return { pathPrefix: "./", pathSuffix: rawPath };
+    }
+
+    let pathPrefix = rawPath.slice(0, lastSlashIndex + 1);
+    const pathSuffix = rawPath.slice(lastSlashIndex + 1);
+
+    // If prefix doesn't explicitly start with `/`, `./`, `../`, `~`, or `@`, prepend `./` to make it current folder relative
+    if (!/^[./~@]+/.test(pathPrefix)) {
+      pathPrefix = "./" + pathPrefix;
+    }
 
     return { pathPrefix, pathSuffix };
   }

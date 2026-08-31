@@ -10,11 +10,14 @@ export function activate(context: vscode.ExtensionContext) {
   const disposable = vscode.languages.registerCompletionItemProvider(
     { scheme: "file" },
     provider,
-    "/",
-    ".",
-    "@",
-    "~",
-    "(",
+    "/", // Folder path separators
+    ".", // Relative paths (./, ../) and file extensions
+    "@", // Path aliases
+    "~", // Home directory aliases
+    "(", // Markdown links/images [text](path)
+    '"', // Double quote imports ("path")
+    "'", // Single quote imports ('path')
+    "`", // Template literal imports (`path`)
   );
   context.subscriptions.push(disposable);
 }
