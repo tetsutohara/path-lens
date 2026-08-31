@@ -33,11 +33,31 @@ This extension contributes the following settings:
 
 No extra dependencies or external tools required! You can use this extension right out of the box.
 
-## Roadmap
+## Features
 
-- [x] Path alias support
-- [x] Directory exclusions
-- [x] Image mini preview
+- **Path Alias Support**
+
+Path Intellisense provides path completion when a path alias is typed.
+
+For example, if `{ "@": "./src" }` is configured in `settings.json`, files inside `./src` will appear as completion suggestions when the user types `@/`.
+
+- **Directory Exclusions**
+
+Path Intellisense does not suggest files or directories that match the configured exclusion patterns.
+
+For example, if `node_modules` is set as an excluded directory in `settings.json`, files and directories inside `node_modules` will not appear in path completion suggestions.
+
+- **Image Mini Preview**
+
+Path Intellisense displays a mini preview when an image file is selected from the path completion suggestions.
+
+![image-preview](./asset/image-preview.png)
+
+- **Path Completion for Markdown**
+
+Path Intellisense provides path completion when a file path is typed in a Markdown file.
+
+For example, when the user types `![image](./images/`, files inside `./images` will appear as path completion suggestions.
 
 ## Release Notes
 
