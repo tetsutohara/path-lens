@@ -11,7 +11,32 @@ export class PathCompletionProvider implements vscode.CompletionItemProvider {
 
   private extractPathInput(
     linePrefix: string,
+    isMarkdown: boolean,
   ): { pathPrefix: string; pathSuffix: string } | undefined {
+    // 1. Markdown Link & Image Handling: [text](path) or ![alt](path)
+    if (isMarkdown) {
+      // Matches `[link](` or `![alt](` right up to the cursor
+      const mdMatch = linePrefix.match(/!?\[.*?\]\(([^)]*)$/);
+      if (mdMatch) {
+        const rawPath = mdMatch[1];
+        // Ignore external URLs, mailto links, and anchor fragments
+        if (/^(https?:\/\/|mailto:|ftp:\/\/|#|\/\/)/i.test(rawPath)) {
+          return undefined;
+        }
+
+        const lastSlashIndex = rawPath.lastIndexOf("/");
+        if (lastSlashIndex === -1) {
+          return { pathPrefix: "./", pathSuffix: rawPath };
+        }
+
+        return {
+          pathPrefix: rawPath.slice(0, lastSlashIndex + 1),
+          pathSuffix: rawPath.slice(lastSlashIndex + 1),
+        };
+      }
+    }
+
+    // 2. Standard quote/whitespace path handling
     const lastSlashIndex = linePrefix.lastIndexOf("/");
     if (lastSlashIndex === -1) {
       return undefined;
@@ -40,7 +65,8 @@ export class PathCompletionProvider implements vscode.CompletionItemProvider {
       .lineAt(position)
       .text.slice(0, position.character);
 
-    const parsedPath = this.extractPathInput(linePrefix);
+    const isMarkdown = document.languageId === "markdown";
+    const parsedPath = this.extractPathInput(linePrefix, isMarkdown);
     if (!parsedPath) {
       return undefined;
     }
