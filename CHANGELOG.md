@@ -6,12 +6,19 @@ See [Keep a Changelog](https://keepachangelog.com/) for recommendations on how t
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-08-31
+
+### Added
+
+- Add support for Markdown link (`[text](path)`) and image (`![alt](path)`) path completion.
+- Add automatic filtering to show only image files and directories when completing Markdown image links.
+
 ## [1.2.0] - 2026-08-28
 
 ### Added
 
-- Added `pathLens.excludeExtension` configuration setting.
-- Added support for stripping file extensions from completion insertions based on user settings.
+- Add `pathLens.excludeExtension` configuration setting.
+- Add support for stripping file extensions from completion insertions based on user settings.
 
 ## [1.1.0] - 2026-08-25
 
@@ -77,6 +84,9 @@ See [Keep a Changelog](https://keepachangelog.com/) for recommendations on how t
 - Add the repository URL and publisher name to `package.json`.
 - Initial release.
 
+[1.3.0]: https://github.com/tetsutohara/path-lens/compare/v1.2.0...v1.3.0
+[1.2.0]: https://github.com/tetsutohara/path-lens/compare/v1.1.0...v1.2.0
+[1.1.0]: https://github.com/tetsutohara/path-lens/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/tetsutohara/path-lens/compare/v0.1.3...v1.0.0
 [0.1.3]: https://github.com/tetsutohara/path-lens/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/tetsutohara/path-lens/compare/v0.1.1...v0.1.2
