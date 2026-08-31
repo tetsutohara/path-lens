@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { entry2item, excludeDir } from "../util/completion";
+import { entry2item, excludeDir, filterImageEntries } from "../util/completion";
 import { PathResolver } from "../resolver/pathResolver";
 import { Config } from "../types/types";
 
@@ -12,13 +12,18 @@ export class PathCompletionProvider implements vscode.CompletionItemProvider {
   private extractPathInput(
     linePrefix: string,
     isMarkdown: boolean,
-  ): { pathPrefix: string; pathSuffix: string } | undefined {
+  ):
+    | { pathPrefix: string; pathSuffix: string; isImageOnly?: boolean }
+    | undefined {
     // 1. Markdown Link & Image Handling: [text](path) or ![alt](path)
     if (isMarkdown) {
-      // Matches `[link](` or `![alt](` right up to the cursor
-      const mdMatch = linePrefix.match(/!?\[.*?\]\(([^)]*)$/);
+      // Group 1: Matches '!' if it exists before '[' to detect image context
+      // Group 2: The path inner text
+      const mdMatch = linePrefix.match(/(!)?\[.*?\]\(([^)]*)$/);
       if (mdMatch) {
-        const rawPath = mdMatch[1];
+        const isImageOnly = Boolean(mdMatch[1]);
+        const rawPath = mdMatch[2];
+
         // Ignore external URLs, mailto links, and anchor fragments
         if (/^(https?:\/\/|mailto:|ftp:\/\/|#|\/\/)/i.test(rawPath)) {
           return undefined;
@@ -26,12 +31,13 @@ export class PathCompletionProvider implements vscode.CompletionItemProvider {
 
         const lastSlashIndex = rawPath.lastIndexOf("/");
         if (lastSlashIndex === -1) {
-          return { pathPrefix: "./", pathSuffix: rawPath };
+          return { pathPrefix: "./", pathSuffix: rawPath, isImageOnly };
         }
 
         return {
           pathPrefix: rawPath.slice(0, lastSlashIndex + 1),
           pathSuffix: rawPath.slice(lastSlashIndex + 1),
+          isImageOnly,
         };
       }
     }
@@ -71,13 +77,18 @@ export class PathCompletionProvider implements vscode.CompletionItemProvider {
       return undefined;
     }
 
-    const { pathPrefix, pathSuffix } = parsedPath;
+    const { pathPrefix, pathSuffix, isImageOnly } = parsedPath;
 
     const resolver = new PathResolver(this.config);
     const documentDir = resolver.resolveDirectory(pathPrefix, document.uri);
     const targetUri = vscode.Uri.file(documentDir);
     try {
-      const entries = await vscode.workspace.fs.readDirectory(targetUri);
+      let entries = await vscode.workspace.fs.readDirectory(targetUri);
+
+      if (isImageOnly) {
+        entries = filterImageEntries(entries);
+      }
+
       const excludedDir = excludeDir(entries, this.config.excludePath);
       return entry2item(
         excludedDir,

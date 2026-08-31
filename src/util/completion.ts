@@ -1,6 +1,5 @@
 import * as vscode from "vscode";
 import picomatch from "picomatch";
-import { Config } from "../types/types";
 
 export const imageExtensions: readonly string[] = [
   "jpg",
@@ -103,5 +102,18 @@ export function excludeDir(
     const targetPath = isDir ? `${name}/` : name;
 
     return !isExcluded(targetPath) && !isExcluded(name);
+  });
+}
+
+export function filterImageEntries(
+  entries: [string, vscode.FileType][],
+): [string, vscode.FileType][] {
+  return entries.filter(([name, type]) => {
+    if (type === vscode.FileType.Directory) {
+      return true;
+    }
+
+    const ext = name.slice(name.lastIndexOf(".") + 1).toLocaleLowerCase();
+    return imageExtensions.includes(ext);
   });
 }
