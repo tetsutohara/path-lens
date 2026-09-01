@@ -6,6 +6,14 @@ See [Keep a Changelog](https://keepachangelog.com/) for recommendations on how t
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-09-01
+
+### Added
+
+- Support for bare and implicit relative paths without requiring explicit `./` or `/` prefixes (e.g., Pug `include` directives).
+- Default path resolution to the current directory (`./`) when no directory separator has been typed yet.
+- Single quotes (`'`), double quotes (`"`), and backticks (`` ` ``) as completion trigger characters in `registerCompletionItemProvider`.
+
 ## [1.3.0] - 2026-08-31
 
 ### Added
@@ -84,6 +92,7 @@ See [Keep a Changelog](https://keepachangelog.com/) for recommendations on how t
 - Add the repository URL and publisher name to `package.json`.
 - Initial release.
 
+[1.4.0]: https://github.com/tetsutohara/path-lens/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/tetsutohara/path-lens/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/tetsutohara/path-lens/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/tetsutohara/path-lens/compare/v1.0.0...v1.1.0
