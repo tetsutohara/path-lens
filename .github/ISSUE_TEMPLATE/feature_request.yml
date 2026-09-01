@@ -1,0 +1,61 @@
+name: Feature Request
+description: Suggest a new feature or improvement for Path Lens.
+title: "[Feature]: "
+labels: ["enhancement", "triage"]
+type: feature
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to suggest a feature!
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or Use Case
+      description: Describe the problem you are trying to solve or the use case this feature would address.
+      placeholder: Clearly describe the problem or limitation you are currently experiencing.
+      value: |
+        ## Problem
+        Describe the problem...
+
+        ## Use Case
+        Describe how this feature would be useful...
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-solution
+    attributes:
+      label: Proposed Solution
+      description: Describe the feature or behavior you would like to see.
+      placeholder: Clearly describe your proposed solution.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Describe any alternative solutions, workarounds, or existing features you have considered.
+      placeholder: Describe any alternatives or workarounds you have tried.
+    validations:
+      required: false
+
+  - type: textarea
+    id: examples
+    attributes:
+      label: Examples or Mockups
+      description: Provide examples, screenshots, GIFs, or mockups that help illustrate the proposed feature.
+      placeholder: Add screenshots, GIFs, code examples, or other relevant information here.
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Add any other information that may help explain or evaluate this feature request.
+      placeholder: Add any additional context here.
+    validations:
+      required: false

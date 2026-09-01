@@ -1,0 +1,61 @@
+name: Bug Report
+description: Report a bug or unexpected behavior.
+title: "[Bug]: "
+labels: ["bug", "triage"]
+type: bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug!
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist Before Creating an Issue
+      description: Please verify the following before submitting your report.
+      options:
+        - label: I am using the latest version of `path-lens`.
+          required: true
+        - label: I am using the latest version of VS Code.
+          required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Detailed Description
+      description: Clear and detailed bug reports help us resolve issues faster. For guidance on asking good questions, see [Stack Overflow's guide](https://stackoverflow.com/help/how-to-ask).
+      placeholder: Clearly describe what happened and what you expected to happen.
+      value: |
+        ## Bug Description
+        Describe what happened...
+
+        ## Expected Behavior
+        Describe what you expected to happen...
+    validations:
+      required: true
+
+  - type: input
+    id: vscode-version
+    attributes:
+      label: VS Code Version
+      placeholder: e.g. 1.105.0
+    validations:
+      required: false
+
+  - type: textarea
+    id: settings
+    attributes:
+      label: Relevant Settings (`settings.json`)
+      description: Paste any relevant Path Lens settings or custom path alias configurations here.
+      render: json
+    validations:
+      required: false
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant Logs & Screenshots
+      description: Paste any relevant log output or drag and drop screenshots/GIFs here.
+    validations:
+      required: false
