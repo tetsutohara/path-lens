@@ -1,7 +1,8 @@
 import * as vscode from "vscode";
 import { entry2item, excludeDir, filterImageEntries } from "../util/completion";
 import { PathResolver } from "../resolver/pathResolver";
-import { Config } from "../types/types";
+import { Config } from "../interface/config";
+import { EntryConversionOptions } from "../interface/argument";
 
 export class PathCompletionProvider implements vscode.CompletionItemProvider {
   private config;
@@ -87,7 +88,6 @@ export class PathCompletionProvider implements vscode.CompletionItemProvider {
     if (!parsedPath) {
       return undefined;
     }
-
     const { pathPrefix, pathSuffix, isImageOnly } = parsedPath;
 
     const resolver = new PathResolver(this.config);
@@ -99,14 +99,15 @@ export class PathCompletionProvider implements vscode.CompletionItemProvider {
       if (isImageOnly) {
         entries = filterImageEntries(entries);
       }
-
       const excludedDir = excludeDir(entries, this.config.excludePath);
-      return entry2item(
-        excludedDir,
-        pathSuffix,
-        targetUri,
-        this.config.excludeExtension,
-      );
+
+      const argument: EntryConversionOptions = {
+        entries: excludedDir,
+        pathSuffix: pathSuffix,
+        targetUri: targetUri,
+        config: this.config,
+      };
+      return entry2item(argument);
     } catch (error) {
       return undefined;
     }

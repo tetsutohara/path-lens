@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import * as path from "path";
-import { Config } from "../types/types"; // Interface
-import { PathType } from "../types/types"; // Type
+import { Config } from "../interface/config";
+import { PathType } from "../types/types";
 
 export class PathResolver {
   private config;

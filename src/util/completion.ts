@@ -1,5 +1,7 @@
 import * as vscode from "vscode";
 import picomatch from "picomatch";
+import { EntryConversionOptions } from "../interface/argument";
+import { Config } from "../interface/config";
 
 export const imageExtensions: readonly string[] = [
   "jpg",
@@ -24,65 +26,34 @@ export const imageExtensions: readonly string[] = [
 ] as const;
 
 export function entry2item(
-  entries: [string, vscode.FileType][],
-  pathSuffix: string,
-  targetUri: vscode.Uri,
-  excludeExtension: string[] | undefined,
+  options: EntryConversionOptions,
 ): vscode.CompletionItem[] {
+  const { entries, pathSuffix, targetUri, config } = options;
+
   return entries.map(([name, type]) => {
     const isDir = type === vscode.FileType.Directory;
+    const kind = isDir
+      ? vscode.CompletionItemKind.Folder
+      : vscode.CompletionItemKind.File;
 
-    const item = new vscode.CompletionItem(
+    const item = new vscode.CompletionItem(name, kind);
+
+    // Attach image documentation if applicable
+    item.documentation = buildImagePreview(targetUri, name);
+
+    // Apply insert text & completion commands
+    const { insertText, command } = resolveInsertText(
       name,
-      isDir ? vscode.CompletionItemKind.Folder : vscode.CompletionItemKind.File,
+      isDir,
+      pathSuffix,
+      config,
     );
-
-    const completionItemLastPeriodIndex = name.lastIndexOf(".");
-
-    if (completionItemLastPeriodIndex > 0) {
-      const fileExtension = name
-        .slice(completionItemLastPeriodIndex + 1)
-        .toLowerCase();
-
-      // Add image mini screen
-      if (imageExtensions.includes(fileExtension)) {
-        const imageUri = vscode.Uri.joinPath(targetUri, name);
-        const docs = new vscode.MarkdownString(
-          `![preview](${imageUri.toString()}|width=300)`,
-        );
-        docs.isTrusted = true;
-        item.documentation = docs;
-      }
-
-      if (excludeExtension && excludeExtension.includes(fileExtension)) {
-        item.insertText = name.slice(0, completionItemLastPeriodIndex);
-      }
-    }
-
-    // Prevent duplicated path completion when the user run path completion
-    //  just after file extension period (e.g. suppose | as cursor ./my-path/hoo.|)
-    const lastPeriodIndex = pathSuffix.lastIndexOf(".");
-
-    let remainPath;
-    if (lastPeriodIndex !== -1) {
-      // slice starts 1 to drop the first single/double quotation.
-      remainPath = name.slice(lastPeriodIndex + 1, name.length);
-      item.insertText = new vscode.SnippetString(remainPath);
-    }
-
-    // Add a trailing slash automatically if it is a directory
-    if (isDir) {
-      item.insertText = `${name}/`;
-      item.command = {
-        command: "editor.action.triggerSuggest",
-        title: "Re-trigger completions",
-      };
-    }
+    if (insertText) item.insertText = insertText;
+    if (command) item.command = command;
 
     return item;
   });
 }
-
 export function excludeDir(
   entries: [string, vscode.FileType][],
   excludePath: string[] | undefined,
@@ -116,4 +87,57 @@ export function filterImageEntries(
     const ext = name.slice(name.lastIndexOf(".") + 1).toLocaleLowerCase();
     return imageExtensions.includes(ext);
   });
+}
+
+// Helper: Build documentation preview for images
+function buildImagePreview(
+  targetUri: vscode.Uri,
+  name: string,
+): vscode.MarkdownString | undefined {
+  const ext = name.split(".").pop()?.toLowerCase();
+  if (!ext || !imageExtensions.includes(ext)) return undefined;
+
+  const imageUri = vscode.Uri.joinPath(targetUri, name);
+  const docs = new vscode.MarkdownString(
+    `![preview](${imageUri.toString()}|width=300)`,
+  );
+  docs.isTrusted = true;
+  return docs;
+}
+
+// Helper: Determine insert text overrides (extensions, suffixes, directories)
+function resolveInsertText(
+  name: string,
+  isDir: boolean,
+  pathSuffix: string,
+  config: Config,
+): { insertText?: string | vscode.SnippetString; command?: vscode.Command } {
+  if (isDir) {
+    return {
+      insertText: `${name}/`,
+      command: {
+        command: "editor.action.triggerSuggest",
+        title: "Re-trigger completions",
+      },
+    };
+  }
+
+  const periodIndex = name.lastIndexOf(".");
+  let text = name;
+
+  // Handle explicit extension hiding rules (e.g. 'never')
+  if (periodIndex > 0) {
+    const fileExtension = name.slice(periodIndex + 1).toLowerCase();
+    if (config.explicitExtensionRules?.[fileExtension] === "never") {
+      text = name.slice(0, periodIndex);
+    }
+  }
+
+  // Handle user typing past a period (e.g. ./path/file.|)
+  const lastPeriodIndex = pathSuffix.lastIndexOf(".");
+  if (lastPeriodIndex !== -1) {
+    text = name.slice(lastPeriodIndex + 1);
+  }
+
+  return text !== name ? { insertText: new vscode.SnippetString(text) } : {};
 }
