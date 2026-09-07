@@ -13,9 +13,9 @@ export function getConfig(): Config {
       "**/node_modules/**",
       "**/out/**",
     ]),
-    excludeExtension: workspaceConfig.get<string[]>("excludeExtension", [
-      "ts",
-      "tsx",
+    extensionGroup: workspaceConfig.get<string[][]>("extensionGroup", [
+      ["ts", "tsx"],
+      ["js", "jsx"],
     ]),
   };
 }

@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import picomatch from "picomatch";
+import { extractExtension, extractName } from "./fileUtils";
 
 export const imageExtensions: readonly string[] = [
   "jpg",
@@ -27,7 +28,8 @@ export function entry2item(
   entries: [string, vscode.FileType][],
   pathSuffix: string,
   targetUri: vscode.Uri,
-  excludeExtension: string[] | undefined,
+  extensionGroup: string[][] | undefined,
+  currentFileExtension: string | undefined,
 ): vscode.CompletionItem[] {
   return entries.map(([name, type]) => {
     const isDir = type === vscode.FileType.Directory;
@@ -54,8 +56,18 @@ export function entry2item(
         item.documentation = docs;
       }
 
-      if (excludeExtension && excludeExtension.includes(fileExtension)) {
-        item.insertText = name.slice(0, completionItemLastPeriodIndex);
+      const targetFileExtension = extractExtension(name);
+      if (currentFileExtension && targetFileExtension) {
+        const isMatch = extensionGroup?.some(
+          (group) =>
+            group.includes(currentFileExtension) &&
+            group.includes(targetFileExtension),
+        );
+
+        if (isMatch) {
+          const fileName = extractName(name);
+          item.insertText = new vscode.SnippetString(fileName);
+        }
       }
     }
 

@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import { entry2item, excludeDir, filterImageEntries } from "../util/completion";
 import { PathResolver } from "../resolver/pathResolver";
 import { Config } from "../types/types";
+import { extractExtension } from "../util/fileUtils";
 
 export class PathCompletionProvider implements vscode.CompletionItemProvider {
   private config;
@@ -101,11 +102,13 @@ export class PathCompletionProvider implements vscode.CompletionItemProvider {
       }
 
       const excludedDir = excludeDir(entries, this.config.excludePath);
+      const currentFileExtension = extractExtension(document.fileName);
       return entry2item(
         excludedDir,
         pathSuffix,
         targetUri,
-        this.config.excludeExtension,
+        this.config.extensionGroup,
+        currentFileExtension,
       );
     } catch (error) {
       return undefined;
