@@ -1,131 +1,60 @@
 import * as vscode from "vscode";
-import picomatch from "picomatch";
-import { extractExtension, extractName } from "./fileUtils";
-
-export const imageExtensions: readonly string[] = [
-  "jpg",
-  "jpeg",
-  "png",
-  "gif",
-  "webp",
-  "svg",
-  "bmp",
-  "ico",
-  "tiff",
-  "tif",
-  "avif",
-  "heic",
-  "heif",
-  "raw",
-  "cr2",
-  "nef",
-  "arw",
-  "dng",
-  "psd",
-] as const;
+import { extractExtension } from "./fileUtils";
+import { EntryToItemOption } from "../interface/entryToItem";
+import { imageExtensions } from "../types/imageTypes";
+import { filterExcludedEntries, filterImageEntries } from "./entryFilters";
+import {
+  createCompletionItem,
+  attachImagePreview,
+  applyExtensionGroupDrop,
+  deduplicatePeriodSuffix,
+} from "./completionItemBuilder";
 
 export function entry2item(
-  entries: [string, vscode.FileType][],
-  pathSuffix: string,
-  targetUri: vscode.Uri,
-  extensionGroup: string[][] | undefined,
-  currentFileExtension: string | undefined,
+  options: EntryToItemOption,
 ): vscode.CompletionItem[] {
-  return entries.map(([name, type]) => {
-    const isDir = type === vscode.FileType.Directory;
+  // Decompose input
+  const { config, targetUri, isImageOnly, fileStrings } = options;
+  const { pathSuffix, activeFileExtension } = fileStrings;
+  let { entries } = options;
 
-    const item = new vscode.CompletionItem(
-      name,
-      isDir ? vscode.CompletionItemKind.Folder : vscode.CompletionItemKind.File,
-    );
+  // Get only image files (Markdown)
+  if (isImageOnly) {
+    entries = filterImageEntries(entries);
+  }
+  // Exclude folders
+  const includedEntries = filterExcludedEntries(entries, config.excludePath);
+
+  return includedEntries.map(([name, type]) => {
+    const item = createCompletionItem(type, name);
 
     const completionItemLastPeriodIndex = name.lastIndexOf(".");
-
     if (completionItemLastPeriodIndex > 0) {
-      const fileExtension = name
-        .slice(completionItemLastPeriodIndex + 1)
-        .toLowerCase();
+      const targetFileExtension = extractExtension(name);
 
       // Add image mini screen
-      if (imageExtensions.includes(fileExtension)) {
-        const imageUri = vscode.Uri.joinPath(targetUri, name);
-        const docs = new vscode.MarkdownString(
-          `![preview](${imageUri.toString()}|width=300)`,
-        );
-        docs.isTrusted = true;
-        item.documentation = docs;
-      }
-
-      const targetFileExtension = extractExtension(name);
-      if (currentFileExtension && targetFileExtension) {
-        const isMatch = extensionGroup?.some(
-          (group) =>
-            group.includes(currentFileExtension) &&
-            group.includes(targetFileExtension),
-        );
-
-        if (isMatch) {
-          const fileName = extractName(name);
-          item.insertText = new vscode.SnippetString(fileName);
+      if (targetFileExtension) {
+        const isImage = imageExtensions.includes(targetFileExtension);
+        if (isImage) {
+          attachImagePreview(item, name, targetUri);
         }
       }
+
+      // Drop the extension if the extension of active file and target file is same
+      if (
+        activeFileExtension &&
+        targetFileExtension &&
+        config.extensionGroup?.length
+      ) {
+        applyExtensionGroupDrop(item, name, config.extensionGroup, {
+          activeFileExtension,
+          targetFileExtension,
+        });
+      }
     }
 
-    // Prevent duplicated path completion when the user run path completion
-    //  just after file extension period (e.g. suppose | as cursor ./my-path/hoo.|)
-    const lastPeriodIndex = pathSuffix.lastIndexOf(".");
-
-    let remainPath;
-    if (lastPeriodIndex !== -1) {
-      // slice starts 1 to drop the first single/double quotation.
-      remainPath = name.slice(lastPeriodIndex + 1, name.length);
-      item.insertText = new vscode.SnippetString(remainPath);
-    }
-
-    // Add a trailing slash automatically if it is a directory
-    if (isDir) {
-      item.insertText = `${name}/`;
-      item.command = {
-        command: "editor.action.triggerSuggest",
-        title: "Re-trigger completions",
-      };
-    }
+    deduplicatePeriodSuffix(item, name, pathSuffix);
 
     return item;
-  });
-}
-
-export function excludeDir(
-  entries: [string, vscode.FileType][],
-  excludePath: string[] | undefined,
-): [string, vscode.FileType][] {
-  // If no exclude rules exist or array is empty, return all entries
-  if (!excludePath || excludePath.length === 0) {
-    return entries;
-  }
-
-  // Create a matcher function from the configured glob patterns
-  const isExcluded = picomatch(excludePath, { dot: true });
-
-  return entries.filter(([name, type]) => {
-    const isDir = type === vscode.FileType.Directory;
-
-    // Test exact file/folder name as well as normalized folder path
-    const targetPath = isDir ? `${name}/` : name;
-
-    return !isExcluded(targetPath) && !isExcluded(name);
-  });
-}
-
-export function filterImageEntries(
-  entries: [string, vscode.FileType][],
-): [string, vscode.FileType][] {
-  return entries.filter(([name, type]) => {
-    if (type === vscode.FileType.Directory) {
-      return true;
-    }
-
-    const ext = name.slice(name.lastIndexOf(".") + 1).toLocaleLowerCase();
-    return imageExtensions.includes(ext);
   });
 }

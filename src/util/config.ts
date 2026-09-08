@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { Config } from "../types/types";
+import { Config } from "../interface/config";
 
 // Helper to fetch and normalize from VS Code
 export function getConfig(): Config {

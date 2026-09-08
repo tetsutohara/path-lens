@@ -4,5 +4,3 @@ export interface Config {
   excludePath?: string[];
   extensionGroup?: string[][];
 }
-
-export type PathType = "relative" | "absolute";

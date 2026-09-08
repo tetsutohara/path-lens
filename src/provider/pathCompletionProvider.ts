@@ -1,8 +1,9 @@
 import * as vscode from "vscode";
-import { entry2item, excludeDir, filterImageEntries } from "../util/completion";
+import { entry2item } from "../util/completion";
 import { PathResolver } from "../resolver/pathResolver";
-import { Config } from "../types/types";
+import { Config } from "../interface/config";
 import { extractExtension } from "../util/fileUtils";
+import { EntryToItemOption, FileStrings } from "../interface/entryToItem";
 
 export class PathCompletionProvider implements vscode.CompletionItemProvider {
   private config;
@@ -74,7 +75,7 @@ export class PathCompletionProvider implements vscode.CompletionItemProvider {
     document: vscode.TextDocument,
     position: vscode.Position,
   ): Promise<vscode.CompletionItem[] | undefined> {
-    // Terminate plugin
+    // Return nothing and end the logic
     if (!this.config.enable) {
       return undefined;
     }
@@ -82,13 +83,12 @@ export class PathCompletionProvider implements vscode.CompletionItemProvider {
     const linePrefix = document
       .lineAt(position)
       .text.slice(0, position.character);
-
     const isMarkdown = document.languageId === "markdown";
     const parsedPath = this.extractPathInput(linePrefix, isMarkdown);
+
     if (!parsedPath) {
       return undefined;
     }
-
     const { pathPrefix, pathSuffix, isImageOnly } = parsedPath;
 
     const resolver = new PathResolver(this.config);
@@ -97,19 +97,21 @@ export class PathCompletionProvider implements vscode.CompletionItemProvider {
     try {
       let entries = await vscode.workspace.fs.readDirectory(targetUri);
 
-      if (isImageOnly) {
-        entries = filterImageEntries(entries);
-      }
-
-      const excludedDir = excludeDir(entries, this.config.excludePath);
       const currentFileExtension = extractExtension(document.fileName);
-      return entry2item(
-        excludedDir,
-        pathSuffix,
-        targetUri,
-        this.config.extensionGroup,
-        currentFileExtension,
-      );
+
+      const fileStrings: FileStrings = {
+        pathSuffix: pathSuffix,
+        activeFileExtension: currentFileExtension,
+      };
+      const options: EntryToItemOption = {
+        config: this.config,
+        entries: entries,
+        targetUri: targetUri,
+        isImageOnly: isImageOnly,
+        fileStrings: fileStrings,
+      };
+
+      return entry2item(options);
     } catch (error) {
       return undefined;
     }
