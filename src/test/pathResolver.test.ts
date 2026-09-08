@@ -1,10 +1,9 @@
 import * as assert from "assert";
 import * as vscode from "vscode";
 import * as fs from "fs/promises";
-import * as os from "os";
 import { PathResolver } from "../resolver/pathResolver";
 import path from "path";
-import { Config } from "../types/types";
+import { Config } from "../interface/config";
 
 suite("PathResolver Test Suite", () => {
   // 1. Test private helper function
