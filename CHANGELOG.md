@@ -6,6 +6,12 @@ See [Keep a Changelog](https://keepachangelog.com/) for recommendations on how t
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-09-08
+
+### Added
+
+- Add extension groups. The extension is dropped if the active file and target file belong to the same group or share the same extension.
+
 ## [1.4.0] - 2026-09-01
 
 ### Added

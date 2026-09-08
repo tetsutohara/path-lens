@@ -14,12 +14,12 @@ A fast, feature-rich Path IntelliSense extension for Visual Studio Code.
 
 This extension contributes the following settings:
 
-| Setting                     | Type      | Default                               | Description                                                   |
-| :-------------------------- | :-------- | :------------------------------------ | :------------------------------------------------------------ |
-| `pathLens.enable`           | `boolean` | `true`                                | Enable or disable path completion globally.                   |
-| `pathLens.alias`            | `object`  | `{ "@": "./src" }`                    | Map custom path aliases to target workspace directories.      |
-| `pathLens.excludePath`      | `array`   | `["**/node_modules/**", "**/out/**"]` | Glob patterns or directory paths to exclude from completions. |
-| `pathLens.excludeExtension` | `array`   | `["ts", "tsx"]`                       | File extensions to strip when inserting auto-completions.     |
+| Setting                   | Type      | Default                               | Description                                                                                    |
+| :------------------------ | :-------- | :------------------------------------ | :--------------------------------------------------------------------------------------------- |
+| `pathLens.enable`         | `boolean` | `true`                                | Enable or disable path completion globally.                                                    |
+| `pathLens.alias`          | `object`  | `{ "@": "/src" }`                     | Map custom path aliases to target workspace directories.                                       |
+| `pathLens.excludePath`    | `array`   | `["**/node_modules/**", "**/out/**"]` | Glob patterns or directory paths to exclude from completions.                                  |
+| `pathLens.extensionGroup` | `array`   | `[["ts", "tsx"], ["js", "jsx"],]`     | Drops the file extension if both the active file and the target file belong to the same group. |
 
 ## Requirements
 
@@ -31,7 +31,7 @@ No extra dependencies or external tools required! You can use this extension rig
 
 Path Intellisense provides path completion when a path alias is typed.
 
-For example, if `{ "@": "./src" }` is configured in `settings.json`, files inside `./src` will appear as completion suggestions when the user types `@/`.
+For example, if `{ "@": "/src" }` is configured in `settings.json`, files inside `/src` will appear as completion suggestions when the user types `@/`.
 
 - **Directory Exclusions**
 
