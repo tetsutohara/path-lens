@@ -18,6 +18,11 @@ export function entry2item(
   const { pathSuffix, activeFileExtension } = fileStrings;
   let { entries } = options;
 
+  // Filter by the typed path suffix
+  if (pathSuffix) {
+    entries = entries.filter(([name]) => name.startsWith(pathSuffix));
+  }
+
   // Get only image files (Markdown)
   if (isImageOnly) {
     entries = filterImageEntries(entries);

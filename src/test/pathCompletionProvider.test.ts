@@ -41,7 +41,10 @@ suite("PathCompletionProvider Test Suite", () => {
     const line = "import x from 'util";
     const result = (provider as any).extractPathInput(line);
 
-    assert.deepStrictEqual(result, undefined);
+    assert.deepStrictEqual(result, {
+      pathPrefix: "./",
+      pathSuffix: "util",
+    });
   });
 
   async function createTextDoc(
@@ -152,11 +155,13 @@ suite("PathCompletionProvider Test Suite", () => {
     try {
       const document = await createTextDoc(tempDir, "import x from 'util");
 
-      const position = new vscode.Position(0, 9);
+      const position = new vscode.Position(0, document.lineAt(0).text.length);
 
       const result = await provider.provideCompletionItems(document, position);
 
-      assert.strictEqual(result, undefined);
+      console.log("RESULT", result);
+
+      assert.deepStrictEqual(result, []);
     } finally {
       await fs.rm(tempDir, {
         recursive: true,
@@ -193,6 +198,42 @@ suite("PathCompletionProvider Test Suite", () => {
         recursive: true,
         force: true,
       });
+    }
+  });
+
+  test("provideCompletionItems - [markdown] return only image files", async () => {
+    const tmpDir = await fs.mkdtemp(
+      path.join(os.tmpdir(), "path-completion-test-"),
+    );
+
+    try {
+      // Create files:
+      //
+      // tempDir/
+      // ├── src/
+      // │   ├── hoo.ts
+      // │   └── tmp.ts
+      // └── test.txt
+      //
+      await fs.writeFile(path.join(tmpDir, "hoo.png"), "");
+      await fs.writeFile(path.join(tmpDir, "tmp.webp"), "");
+      await fs.writeFile(path.join(tmpDir, "bar.txt"), "");
+
+      const filePath = path.join(tmpDir, "test.md");
+      await fs.writeFile(filePath, "![image](./)");
+      const doc = await vscode.workspace.openTextDocument(filePath);
+      const pos = new vscode.Position(0, 11);
+      const result = await provider.provideCompletionItems(doc, pos);
+
+      assert.ok(result);
+      assert.strictEqual(result.length, 2);
+
+      const labels = result.map((item) => item.label);
+
+      assert.ok(labels.includes("hoo.png"));
+      assert.ok(labels.includes("tmp.webp"));
+    } finally {
+      fs.rm(tmpDir, { force: true, recursive: true });
     }
   });
 });
