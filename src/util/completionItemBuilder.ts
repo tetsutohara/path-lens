@@ -76,9 +76,13 @@ export function applyExtensionGroupDrop(
   extensions: { activeFileExtension: string; targetFileExtension: string },
 ): void {
   const isMatch = _isSameGroup(extensionGroup, extensions);
+
   if (isMatch) {
     const fileName = extractName(name);
     item.insertText = new vscode.SnippetString(fileName);
+    console.log("isMatch:", isMatch);
+    console.log("name:", name);
+    console.log("fileName:", fileName);
   }
 }
 

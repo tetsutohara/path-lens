@@ -4,16 +4,12 @@ import * as fs from "fs/promises";
 import * as os from "os";
 import { PathCompletionProvider } from "../provider/pathCompletionProvider";
 import path from "path";
+import { getConfig } from "../util/config";
 
 suite("PathCompletionProvider Test Suite", () => {
   vscode.window.showInformationMessage("Start PathCompletionProvider Test");
 
-  const config = {
-    enable: true,
-    alias: { "@": "/src" },
-    excludePath: ["**/node_modules/**"],
-  };
-
+  const config = getConfig();
   const provider = new PathCompletionProvider(config);
 
   // 1. Test private helper function
@@ -159,8 +155,6 @@ suite("PathCompletionProvider Test Suite", () => {
 
       const result = await provider.provideCompletionItems(document, position);
 
-      console.log("RESULT", result);
-
       assert.deepStrictEqual(result, []);
     } finally {
       await fs.rm(tempDir, {
@@ -209,11 +203,11 @@ suite("PathCompletionProvider Test Suite", () => {
     try {
       // Create files:
       //
-      // tempDir/
-      // ├── src/
-      // │   ├── hoo.ts
-      // │   └── tmp.ts
-      // └── test.txt
+      // tmpDir/
+      // ├── hoo.png
+      // ├── tmp.webp
+      // ├── bar.txt
+      // └── test.md
       //
       await fs.writeFile(path.join(tmpDir, "hoo.png"), "");
       await fs.writeFile(path.join(tmpDir, "tmp.webp"), "");
@@ -232,6 +226,51 @@ suite("PathCompletionProvider Test Suite", () => {
 
       assert.ok(labels.includes("hoo.png"));
       assert.ok(labels.includes("tmp.webp"));
+    } finally {
+      fs.rm(tmpDir, { force: true, recursive: true });
+    }
+  });
+
+  test("provideCompletionItems - exclude extension string when the extensions of active and target files are same", async () => {
+    const tmpDir = await fs.mkdtemp(
+      path.join(os.tmpdir(), "path-completion-test-"),
+    );
+
+    try {
+      // Create files:
+      //
+      // tmpDir/
+      // ├── hoo.js
+      // ├── tmp.ts
+      // ├── bar.jsx
+      // └── test.js
+      //
+      await fs.writeFile(path.join(tmpDir, "hoo.js"), "");
+      await fs.writeFile(path.join(tmpDir, "tmp.ts"), "");
+      await fs.writeFile(path.join(tmpDir, "bar.jsx"), "");
+
+      const filePath = path.join(tmpDir, "test.js");
+      await fs.writeFile(filePath, "import {z} from ''");
+      const doc = await vscode.workspace.openTextDocument(filePath);
+      const pos = new vscode.Position(0, doc.lineAt(0).text.length - 1);
+      const result = await provider.provideCompletionItems(doc, pos);
+
+      assert.ok(result);
+
+      const hooItem = result.find((item) => item.label === "hoo.js");
+      const barItem = result.find((item) => item.label === "bar.jsx");
+
+      assert.ok(hooItem);
+      assert.ok(barItem);
+
+      assert.strictEqual(
+        (hooItem.insertText as vscode.SnippetString).value,
+        "hoo",
+      );
+      assert.strictEqual(
+        (barItem.insertText as vscode.SnippetString).value,
+        "bar",
+      );
     } finally {
       fs.rm(tmpDir, { force: true, recursive: true });
     }

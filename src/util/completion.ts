@@ -30,6 +30,11 @@ export function entry2item(
   // Exclude folders
   const includedEntries = filterExcludedEntries(entries, config.excludePath);
 
+  console.log("ATTENSION", {
+    activeFileExtension,
+    extensionGroup: config.extensionGroup,
+  });
+
   return includedEntries.map(([name, type]) => {
     const item = createCompletionItem(type, name);
 
