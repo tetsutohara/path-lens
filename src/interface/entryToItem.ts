@@ -12,4 +12,5 @@ export interface EntryToItemOption {
   targetUri: vscode.Uri;
   isImageOnly: boolean | undefined;
   fileStrings: FileStrings;
+  replaceRange: vscode.Range | undefined;
 }

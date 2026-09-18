@@ -14,7 +14,7 @@ export function entry2item(
   options: EntryToItemOption,
 ): vscode.CompletionItem[] {
   // Decompose input
-  const { config, targetUri, isImageOnly, fileStrings } = options;
+  const { config, targetUri, isImageOnly, fileStrings, replaceRange } = options;
   const { pathSuffix, activeFileExtension } = fileStrings;
   let { entries } = options;
 
@@ -29,11 +29,6 @@ export function entry2item(
   }
   // Exclude folders
   const includedEntries = filterExcludedEntries(entries, config.excludePath);
-
-  console.log("ATTENSION", {
-    activeFileExtension,
-    extensionGroup: config.extensionGroup,
-  });
 
   return includedEntries.map(([name, type]) => {
     const item = createCompletionItem(type, name);
@@ -64,6 +59,10 @@ export function entry2item(
     }
 
     deduplicatePeriodSuffix(item, name, pathSuffix);
+
+    if (replaceRange) {
+      item.range = replaceRange;
+    }
 
     return item;
   });

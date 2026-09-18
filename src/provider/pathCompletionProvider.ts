@@ -4,6 +4,7 @@ import { PathResolver } from "../resolver/pathResolver";
 import { Config } from "../interface/config";
 import { extractExtension } from "../util/fileUtils";
 import { EntryToItemOption, FileStrings } from "../interface/entryToItem";
+import { getPathReplacementRange } from "../util/range";
 
 export class PathCompletionProvider implements vscode.CompletionItemProvider {
   private config;
@@ -99,6 +100,8 @@ export class PathCompletionProvider implements vscode.CompletionItemProvider {
 
       const currentFileExtension = extractExtension(document.fileName);
 
+      const replaceRange = getPathReplacementRange(document, position);
+
       const fileStrings: FileStrings = {
         pathSuffix: pathSuffix,
         activeFileExtension: currentFileExtension,
@@ -109,6 +112,7 @@ export class PathCompletionProvider implements vscode.CompletionItemProvider {
         targetUri: targetUri,
         isImageOnly: isImageOnly,
         fileStrings: fileStrings,
+        replaceRange: replaceRange,
       };
 
       return entry2item(options);

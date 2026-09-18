@@ -80,9 +80,6 @@ export function applyExtensionGroupDrop(
   if (isMatch) {
     const fileName = extractName(name);
     item.insertText = new vscode.SnippetString(fileName);
-    console.log("isMatch:", isMatch);
-    console.log("name:", name);
-    console.log("fileName:", fileName);
   }
 }
 
