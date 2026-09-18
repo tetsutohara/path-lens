@@ -51,6 +51,11 @@ Path Intellisense provides path completion when a file path is typed in a Markdo
 
 For example, when the user types `![image](./images/`, files inside `./images` will appear as path completion suggestions.
 
+- **Existing Extension Replacement**
+
+Path Intellisense automatically replaces an existing file extension after the cursor when a path completion suggestion is selected, preventing duplicate file extensions.
+For example, when the cursor is positioned at `./hoo|.tsx` and `hoo.tsx` is selected, the completed path will be `./hoo.tsx` instead of `./hoo.tsx.tsx`.
+
 ## Release Notes
 
 See [CHANGELOG.md](./CHANGELOG.md) for full version history and updates.

@@ -6,6 +6,12 @@ See [Keep a Changelog](https://keepachangelog.com/) for recommendations on how t
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-09-18
+
+### Added
+
+- Automatically replaces an existing file extension after the cursor to prevent duplicate extensions during path completion.
+
 ## [1.5.0] - 2026-09-08
 
 ### Added
@@ -98,6 +104,8 @@ See [Keep a Changelog](https://keepachangelog.com/) for recommendations on how t
 - Add the repository URL and publisher name to `package.json`.
 - Initial release.
 
+[2.0.0]: https://github.com/tetsutohara/path-lens/compare/v1.5.0...v2.0.0
+[1.5.0]: https://github.com/tetsutohara/path-lens/compare/v1.4.0...v1.5.0
 [1.4.0]: https://github.com/tetsutohara/path-lens/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/tetsutohara/path-lens/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/tetsutohara/path-lens/compare/v1.1.0...v1.2.0
