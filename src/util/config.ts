@@ -7,7 +7,7 @@ export function getConfig(): Config {
   return {
     enable: workspaceConfig.get<boolean>("enable", true),
     alias: workspaceConfig.get<Record<string, string>>("alias", {
-      "@": "/src",
+      "@": "{workspaceRoot}/src",
     }),
     excludePath: workspaceConfig.get<string[]>("excludePath", [
       "**/node_modules/**",
