@@ -1,8 +1,7 @@
 import * as vscode from "vscode";
 import * as path from "path";
 import { Config } from "../interface/config";
-import { PathType } from "../types/pathTypes"; // Type
-import { getPathReplacementRange } from "../util/range";
+import { PathType } from "../types/pathTypes";
 
 export class PathResolver {
   private config;
@@ -26,6 +25,8 @@ export class PathResolver {
         const workspaceFolder =
           vscode.workspace.getWorkspaceFolder(documentUri);
         const rootPath = workspaceFolder ? workspaceFolder.uri.fsPath : "";
+        console.log("workspaceRoot: ", workspaceFolder);
+        console.log("rootPath: ", rootPath);
         mapPath = mapPath.replace("${workspaceRoot}", rootPath);
       }
 

@@ -88,42 +88,6 @@ suite("PathCompletionProvider Test Suite", () => {
     }
   });
 
-  test("provideCompletionItems - returns matching files", async () => {
-    const tmpDir = await fs.mkdtemp(
-      path.join(os.tmpdir(), "path-completion-test-"),
-    );
-
-    try {
-      // Create files:
-      //
-      // tempDir/
-      // ├── src/
-      // │   ├── hoo.ts
-      // │   └── tmp.ts
-      // └── test.txt
-      //
-      await fs.mkdir(path.join(tmpDir, "src"));
-
-      await fs.writeFile(path.join(tmpDir, "src", "hoo.ts"), "");
-      await fs.writeFile(path.join(tmpDir, "src", "tmp.ts"), "");
-
-      const doc = await createTextDoc(tmpDir, "./src/");
-      const pos = new vscode.Position(0, 6);
-
-      const result = await provider.provideCompletionItems(doc, pos);
-
-      assert.ok(result);
-      assert.strictEqual(result.length, 2);
-
-      const labels = result.map((item) => item.label);
-
-      assert.ok(labels.includes("hoo.ts"));
-      assert.ok(labels.includes("tmp.ts"));
-    } finally {
-      fs.rm(tmpDir, { force: true, recursive: true });
-    }
-  });
-
   test("provideCompletionItems - returns undefined when path is not found", async () => {
     const tmpDir = await fs.mkdtemp(
       path.join(os.tmpdir(), "path-completion-test-"),

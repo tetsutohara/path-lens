@@ -1,3 +1,4 @@
+import * as os from "os";
 import * as assert from "assert";
 import * as vscode from "vscode";
 import * as fs from "fs/promises";
@@ -69,60 +70,89 @@ suite("PathResolver Test Suite", () => {
   }
 
   test("resolveDirectory 1", async () => {
-    const config: Config = {
-      enable: true,
-      alias: { "@": "/src" },
-      excludePath: ["**/node_modules/**"],
-    };
-    const resolver = new PathResolver(config);
-
-    // 1. Resolve relative to process.cwd() or extension root
-    const workspaceDir = path.resolve(
-      __dirname,
-      "../../src/test/test-workspace",
+    const tmpDir = await fs.mkdtemp(
+      path.join(os.tmpdir(), "path-resolver-test-"),
     );
-    const filePath = path.join(workspaceDir, "test.txt");
 
-    // Ensure directory exists & create dummy file
-    await fs.mkdir(workspaceDir, { recursive: true });
-    await fs.writeFile(filePath, "");
+    try {
+      // Create:
+      //
+      // tmpDir/
+      // └── test.txt
+      //
+      const filePath = path.join(tmpDir, "test.txt");
+      await fs.writeFile(filePath, "");
 
-    const doc = await vscode.workspace.openTextDocument(filePath);
+      const config: Config = {
+        enable: true,
+        alias: { "@": "/src" },
+        excludePath: ["**/node_modules/**"],
+      };
 
-    const pathPrefix = "./";
-    const result = resolver.resolveDirectory(pathPrefix, doc.uri);
+      const resolver = new PathResolver(config);
 
-    assert.strictEqual(result, workspaceDir);
+      const doc = await vscode.workspace.openTextDocument(filePath);
+
+      const pathPrefix = "./";
+      const result = resolver.resolveDirectory(pathPrefix, doc.uri);
+
+      assert.strictEqual(result, tmpDir);
+    } finally {
+      await fs.rm(tmpDir, {
+        recursive: true,
+        force: true,
+      });
+    }
   });
-
-  test("resolveDirectory 2", async () => {
-    const config: Config = {
-      enable: true,
-      alias: { "@": "/src" },
-      excludePath: ["**/node_modules/**"],
-    };
-    const resolver = new PathResolver(config);
-
-    // 1. Resolve relative to process.cwd() or extension root
-    const workspaceDir = path.resolve(
-      __dirname,
-      "../../src/test/test-workspace",
+  test("resolveDirectory - resolves alias from workspace root", async () => {
+    const tmpDir = await fs.mkdtemp(
+      path.join(os.tmpdir(), "path-resolver-test-"),
     );
-    const filePath = path.join(workspaceDir, "test.txt");
 
-    // Ensure directory exists & create dummy file
-    await fs.mkdir(workspaceDir, { recursive: true });
-    await fs.writeFile(filePath, "");
+    try {
+      // Create:
+      //
+      // tmpDir/
+      // ├── src/
+      // └── test.txt
+      //
+      await fs.mkdir(path.join(tmpDir, "src"));
 
-    const doc = await vscode.workspace.openTextDocument(filePath);
+      const filePath = path.join(tmpDir, "test.txt");
+      await fs.writeFile(filePath, "");
 
-    const pathPrefix = "@/";
-    const result = resolver.resolveDirectory(pathPrefix, doc.uri);
+      // Make tmpDir the workspace root
+      vscode.workspace.updateWorkspaceFolders(
+        0,
+        vscode.workspace.workspaceFolders?.length ?? 0,
+        {
+          uri: vscode.Uri.file(tmpDir),
+          name: "test-workspace",
+        },
+      );
 
-    // 2. Since test-workspace is inside the open extension project,
-    // getWorkspaceFolder resolves against the workspace root.
-    const expectedPath = path.resolve(process.cwd(), "src");
+      const config: Config = {
+        enable: true,
+        alias: {
+          "@": "${workspaceRoot}/src",
+        },
+        excludePath: ["**/node_modules/**"],
+      };
 
-    assert.strictEqual(result, expectedPath);
+      const resolver = new PathResolver(config);
+
+      const doc = await vscode.workspace.openTextDocument(filePath);
+
+      const result = resolver.resolveDirectory("@", doc.uri);
+
+      const expectedPath = path.join(tmpDir, "src");
+
+      assert.strictEqual(result, expectedPath);
+    } finally {
+      await fs.rm(tmpDir, {
+        recursive: true,
+        force: true,
+      });
+    }
   });
 });

@@ -11,7 +11,7 @@ export function activate(context: vscode.ExtensionContext) {
     { scheme: "file" },
     provider,
     "/", // Folder path separators
-    "@", // Path aliases
+    // "@", // Path aliases
     "~", // Home directory aliases
     "(", // Markdown links/images [text](path)
     '"', // Double quote imports ("path")
