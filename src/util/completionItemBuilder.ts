@@ -1,5 +1,7 @@
 import * as vscode from "vscode";
-import { extractName } from "./fileUtils";
+import { extractName, extractExtension } from "./fileUtils";
+import { EntryToItemOption } from "../interface/entryToItem";
+import { imageExtensions } from "../types/imageTypes";
 
 /**
  * Builds the base CompletionItem for a file/folder entry. Directories get
@@ -99,4 +101,47 @@ export function deduplicatePeriodSuffix(
     const remainPath = name.slice(lastPeriodIndex + 1);
     item.insertText = new vscode.SnippetString(remainPath);
   }
+}
+
+/** Formats one directory entry after the completion pipeline has filtered it. */
+export function createEntryCompletionItem(
+  name: string,
+  type: vscode.FileType,
+  context: Pick<
+    EntryToItemOption,
+    "config" | "targetUri" | "fileStrings" | "replaceRange"
+  >,
+): vscode.CompletionItem {
+  const { config, targetUri, fileStrings, replaceRange } = context;
+  const { pathSuffix, activeFileExtension } = fileStrings;
+  const item = createCompletionItem(type, name);
+
+  // Keep dotfiles and extensionless names out of extension-based formatting.
+  if (name.lastIndexOf(".") > 0) {
+    const targetFileExtension = extractExtension(name);
+
+    if (targetFileExtension && imageExtensions.includes(targetFileExtension)) {
+      attachImagePreview(item, name, targetUri);
+    }
+
+    if (
+      activeFileExtension &&
+      targetFileExtension &&
+      config.extensionGroup?.length
+    ) {
+      applyExtensionGroupDrop(item, name, config.extensionGroup, {
+        activeFileExtension,
+        targetFileExtension,
+      });
+    }
+  }
+
+  // Suffix handling intentionally takes precedence over extension-group text.
+  deduplicatePeriodSuffix(item, name, pathSuffix);
+
+  if (replaceRange) {
+    item.range = replaceRange;
+  }
+
+  return item;
 }

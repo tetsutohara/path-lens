@@ -3,84 +3,27 @@ import { entry2item } from "../util/completion";
 import { PathResolver } from "../resolver/pathResolver";
 import { Config } from "../interface/config";
 import { extractExtension } from "../util/fileUtils";
-import { EntryToItemOption, FileStrings } from "../interface/entryToItem";
 import { getPathReplacementRange } from "../util/range";
+import { extractPathInput } from "../util/pathInput";
 
+/** Coordinates document parsing, directory lookup, and completion formatting. */
 export class PathCompletionProvider implements vscode.CompletionItemProvider {
-  private config;
-  constructor(config: Config) {
-    this.config = config;
-  }
+  constructor(private readonly config: Config) {}
 
-  private extractPathInput(
-    linePrefix: string,
-    isMarkdown: boolean,
-  ):
-    | { pathPrefix: string; pathSuffix: string; isImageOnly?: boolean }
-    | undefined {
-    // 1. Markdown Link & Image Handling: [text](path) or ![alt](path)
-    if (isMarkdown) {
-      // Group 1: Matches '!' if it exists before '[' to detect image context
-      // Group 2: The path inner text
-      const mdMatch = linePrefix.match(/(!)?\[.*?\]\(([^)]*)$/);
-      if (mdMatch) {
-        const isImageOnly = Boolean(mdMatch[1]);
-        const rawPath = mdMatch[2];
-
-        // Ignore external URLs, mailto links, and anchor fragments
-        if (/^(https?:\/\/|mailto:|ftp:\/\/|#|\/\/)/i.test(rawPath)) {
-          return undefined;
-        }
-
-        const lastSlashIndex = rawPath.lastIndexOf("/");
-        if (lastSlashIndex === -1) {
-          return { pathPrefix: "./", pathSuffix: rawPath, isImageOnly };
-        }
-
-        return {
-          pathPrefix: rawPath.slice(0, lastSlashIndex + 1),
-          pathSuffix: rawPath.slice(lastSlashIndex + 1),
-          isImageOnly,
-        };
-      }
-    }
-
-    // 2. Standard Quote, Whitespace, or Bare Keyword Handling (e.g., `include includes/` or Ctrl+Space after space)
-    // Matches path-like text starting after a quote, tick, whitespace, or beginning of line
-    const match = linePrefix.match(/(?:['"`\s]|^)([\w\-./\\@~]*)$/);
-    if (!match) {
-      return undefined;
-    }
-
-    const rawPath = match[1];
-    const lastSlashIndex = rawPath.lastIndexOf("/");
-
-    if (lastSlashIndex === -1) {
-      // User pressed Ctrl+Space or typed a filename/folder without a slash yet (e.g. `include inc|`)
-      // Default pathPrefix to current folder `./`
-      return { pathPrefix: "./", pathSuffix: rawPath };
-    }
-
-    let pathPrefix = rawPath.slice(0, lastSlashIndex + 1);
-    const pathSuffix = rawPath.slice(lastSlashIndex + 1);
-
-    // If prefix doesn't explicitly start with `/`, `./`, `../`, `~`, or `@`, prepend `./` to make it current folder relative
-    if (!/^[./~@]+/.test(pathPrefix)) {
-      pathPrefix = "./" + pathPrefix;
-    }
-
-    return { pathPrefix, pathSuffix };
+  private extractPathInput(linePrefix: string, isMarkdown: boolean = false) {
+    return extractPathInput(linePrefix, isMarkdown);
   }
 
   async provideCompletionItems(
     document: vscode.TextDocument,
     position: vscode.Position,
   ): Promise<vscode.CompletionItem[] | undefined> {
-    // Return nothing and end the logic
+    // Avoid parsing and filesystem work when completions are disabled.
     if (!this.config.enable) {
       return undefined;
     }
 
+    // Only text before the cursor determines the directory and typed filename.
     const linePrefix = document
       .lineAt(position)
       .text.slice(0, position.character);
@@ -96,27 +39,21 @@ export class PathCompletionProvider implements vscode.CompletionItemProvider {
     const documentDir = resolver.resolveDirectory(pathPrefix, document.uri);
     const targetUri = vscode.Uri.file(documentDir);
     try {
-      let entries = await vscode.workspace.fs.readDirectory(targetUri);
+      const entries = await vscode.workspace.fs.readDirectory(targetUri);
 
-      const currentFileExtension = extractExtension(document.fileName);
-
-      const replaceRange = getPathReplacementRange(document, position);
-
-      const fileStrings: FileStrings = {
-        pathSuffix: pathSuffix,
-        activeFileExtension: currentFileExtension,
-      };
-      const options: EntryToItemOption = {
+      return entry2item({
         config: this.config,
-        entries: entries,
-        targetUri: targetUri,
-        isImageOnly: isImageOnly,
-        fileStrings: fileStrings,
-        replaceRange: replaceRange,
-      };
-
-      return entry2item(options);
-    } catch (error) {
+        entries,
+        targetUri,
+        isImageOnly,
+        fileStrings: {
+          pathSuffix,
+          activeFileExtension: extractExtension(document.fileName),
+        },
+        replaceRange: getPathReplacementRange(document, position),
+      });
+    } catch {
+      // A missing or unreadable directory should leave suggestions unavailable.
       return undefined;
     }
   }
